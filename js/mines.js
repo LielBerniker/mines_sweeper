@@ -4,12 +4,14 @@ var gBoard = []
 gStartTime = 0
 gTimeInterval = 0
 gIsGame = false
+gLoveCount = 3
 const WON = "😄";
 const LOST = "😵";
 const EMPTY = "🔲";
 const MINE = "💣";
 const DETONATION = "💥";
 const FLAG = "🚩";
+const HEART = "❤"
 const DIGITS = ["⬜️", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
 function initGame(size = 4) {
     gLevel.SIZE = size
@@ -32,6 +34,7 @@ renderBoard(gBoard,".board")
 function buildBoard() {
     gBoard = []
     gIsGame = false
+    heartRestart()
     for (var i = 0; i < gLevel.SIZE; i++) {
         gBoard.push([])
         for (var j = 0; j < gLevel.SIZE; j++) {
@@ -86,9 +89,12 @@ function renderBoard(board,selector) {
     const cell = gBoard[i][j]
 
     if (cell.isMine && !cell.isMarked) {
-        stopTimer()
+        loseLife()
+        if(gLoveCount === 0)
+    { stopTimer()
         console.log('Game over');
         return
+    }
     }
     else if (cell.isMarked || cell.isShown) {
         return
@@ -210,4 +216,21 @@ function cellMarked(elCell, i, j) {
   {
     initGame(gLevel.SIZE)
   }
+  function heartRestart()
+  {
+    gLoveCount = 3
+    var currElemCellRow = document.getElementById("love-table").rows[0]
+    for (let i = 0; i < 3; i++) {
+        currElemCellRow.cells[i].innerText = HEART
+        
+    }
+  }
+  function loseLife()
+  {
+    gLoveCount--
+    var currElemCell= document.getElementById("love-table").rows[0].cells[gLoveCount]
+    currElemCell.innerText = "" 
+
+  }
+
 

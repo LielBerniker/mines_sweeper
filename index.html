@@ -15,10 +15,15 @@
         <button class="glow-on-hover less" onclick="initGame()">Easy</button>
         <button class="glow-on-hover less" onclick="initGame(8)">Hard</button>
         <button class="glow-on-hover less" onclick="initGame(12)">Extreme</button>
-
+        <button class="glow-on-hover" onclick="boardRestart()">Restart</button>
     </div>
-<button class="glow-on-hover" onclick="boardRestart()">Restart</button>
-    
+    <div><table id="love-table">
+        <tr>
+          <th id="love1">""</th>
+          <th id="love2">""</th>
+          <th id="love3">""</th>
+        </tr>
+      </table></div>
     <table border="1" cellpadding="10" id="myTable">
         <tbody class="board"></tbody>
     </table>
