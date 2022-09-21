@@ -11,11 +11,27 @@ const MINE = "💣";
 const DETONATION = "💥";
 const FLAG = "🚩";
 const DIGITS = ["⬜️", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
-function initGame() {
+function initGame(size = 4) {
+    gLevel.SIZE = size
+switch (size) {
+    case 4:
+        gLevel.MINES = 2
+        break;
+    case 8:
+        gLevel.MINES = 14
+        break;
+    case 12:
+        gLevel.MINES = 32
+        break;
+    default:
+        break;
+}
 buildBoard()
 renderBoard(gBoard,".board")
 }
 function buildBoard() {
+    gBoard = []
+    gIsGame = false
     for (var i = 0; i < gLevel.SIZE; i++) {
         gBoard.push([])
         for (var j = 0; j < gLevel.SIZE; j++) {
@@ -31,9 +47,9 @@ function buildBoard() {
     var numNegs = 0
     // Neighbours loop - start
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
-        if (i < 0 || i >= gBoard.SIZE) continue
+        if (i < 0 || i >= gLevel.SIZE) continue
         for (var j = colIdx - 1; j <= colIdx + 1; j++) {
-            if (j < 0 || j >= gBoard.SIZE) continue
+            if (j < 0 || j >= gLevel.SIZE) continue
             if (i === rowIdx && j === colIdx) continue
             var currLocation = { row: i, col: j }
             if (inLocations(currLocation, randLocations)) {
@@ -52,7 +68,7 @@ function renderBoard(board,selector) {
         var currCell = board[i][j]
         var className = currCell ? 'occupied' : ''
         // strHTML += `<td class="${className}">${cell}</td>`
-        strHTML += `<td class="${className}" onclick="cellClicked(this,${i},${j})">${""}</td>`
+        strHTML += `<td class="${className}" onclick="cellClicked(this,${i},${j})" oncontextmenu="cellMarked(this,${i},${j}), event.preventDefault();">${""}</td>`
       }
       strHTML += `</tr>`
     }
@@ -81,20 +97,51 @@ function renderBoard(board,selector) {
         cell.isShown = true
         gBoard[i][j] = cell
         elCell.innerText = DIGITS[cell.minesAroundCount]
-        expandShown(elCell, i, j)
+        if(cell.minesAroundCount === 0)
+        {
+            expandShown(elCell, i, j)
+        }
+        
     }
 }
- function cellMarked(elCell)
- {
-
- }
+function cellMarked(elCell, i, j) {
+    const cell = gBoard[i][j]
+    if (cell.isShown) {
+        return
+    }
+    else if (cell.isMarked) {
+        cell.isMarked = false
+        elCell.innerText = ""
+    }
+    else {
+        cell.isMarked = true
+        elCell.innerText = FLAG
+    }
+    gBoard[i][j] = cell
+}
  function checkGameOver()
  {
   
  }
- function expandShown( elCell, i, j)
+ function expandShown(elCell,rowIdx, colIdx)
  {
 
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= gLevel.SIZE) continue
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (j < 0 || j >= gLevel.SIZE) continue
+            if ((i === rowIdx && j === colIdx )||gBoard[i][j].isShown) continue
+            if (!gBoard[i][j].isMine) {
+                gBoard[i][j].isShown = true
+                var currElemCell = document.getElementById("myTable").rows[i].cells[j]
+                currElemCell.innerText = DIGITS[gBoard[i][j].minesAroundCount]
+                if(gBoard[i][j].minesAroundCount === 0)
+                  {
+                      expandShown(currElemCell, i, j)
+                  }
+            }
+        }
+    }
 
  }
 
@@ -158,5 +205,9 @@ function renderBoard(board,selector) {
         }
     }
     console.log(gBoard)
+  }
+  function boardRestart()
+  {
+    initGame(gLevel.SIZE)
   }
 

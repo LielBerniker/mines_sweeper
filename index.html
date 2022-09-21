@@ -11,16 +11,18 @@
 <nav><h1>mines sweeper</h1></nav>
 
 <body onload="initGame()" >
-    <div><h2>time: <span class="game-data timer">0</span></h2></div>
-    <table border="1" cellpadding="10">
+    <div class="container">
+        <button class="glow-on-hover less" onclick="initGame()">Easy</button>
+        <button class="glow-on-hover less" onclick="initGame(8)">Hard</button>
+        <button class="glow-on-hover less" onclick="initGame(12)">Extreme</button>
+
+    </div>
+<button class="glow-on-hover" onclick="boardRestart()">Restart</button>
+    
+    <table border="1" cellpadding="10" id="myTable">
         <tbody class="board"></tbody>
     </table>
-
-    <div class="modal">
-        <h2></h2>
-        <button onclick="">Restart</button>
-    </div>
-
+    <div><h2>time: <span class="game-data timer">0</span></h2></div>
     <script src="js/utils.js"></script>
     <script src="js/mines.js"></script>
 </body>
