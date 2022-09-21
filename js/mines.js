@@ -1,72 +1,104 @@
 var gLevel = { SIZE: 4, MINES: 2 };
 var gGame = { isOn: true, shownCount: 0, markedCount: 0, secsPassed: 0 }
 var gBoard = []
+gStartTime = 0
+gTimeInterval = 0
+gIsGame = false
+const WON = "😄";
+const LOST = "😵";
+const EMPTY = "🔲";
+const MINE = "💣";
+const DETONATION = "💥";
+const FLAG = "🚩";
+const DIGITS = ["⬜️", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"];
 function initGame() {
 buildBoard()
+renderBoard(gBoard,".board")
 }
 function buildBoard() {
-    var randLocations = randMinesLocation()
-    console.log(randLocations)
     for (var i = 0; i < gLevel.SIZE; i++) {
         gBoard.push([])
         for (var j = 0; j < gLevel.SIZE; j++) {
-            var currLocation = {row: i , col: j};
             var currCell
-            if(inLocations(currLocation,randLocations))
-            {
-                currCell = { minesAroundCount: 0, isShown: false, isMine: true, isMarked: false }
-            }
-            else{
-                currCell = { minesAroundCount: 0, isShown: false, isMine: false, isMarked: false }
-            }
-            currCell.minesAroundCount = setMinesNegsCount(i, j, randLocations)
+            currCell = { minesAroundCount: 0, isShown: false, isMine: false, isMarked: false }
             gBoard[i][j] = currCell
         }
     }
     console.log(gBoard)
-    return gBoard
   }
-function setMinesNegsCount(rowIdx, colIdx, randLocations)
-{
-   var numNegs = 0
+
+  function setMinesNegsCount(rowIdx, colIdx, randLocations) {
+    var numNegs = 0
     // Neighbours loop - start
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
-      if (i < 0 || i >= gBoard.SIZE) continue
-      for (var j = colIdx - 1; j <= colIdx + 1; j++) {
-        if (j < 0 || j >= gBoard.SIZE) continue
-        if (i === rowIdx && j === colIdx) continue
-        var currLocation = {row: rowIdx , col:colIdx};
-        if (inLocations(currLocation,randLocations)) {
-          numNegs++
+        if (i < 0 || i >= gBoard.SIZE) continue
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (j < 0 || j >= gBoard.SIZE) continue
+            if (i === rowIdx && j === colIdx) continue
+            var currLocation = { row: i, col: j }
+            if (inLocations(currLocation, randLocations)) {
+                numNegs++
+            }
         }
-      }
     }
     //Neighbours loop - end
-  
     return numNegs
 }
-function renderBoard(board)
-{
+function renderBoard(board,selector) {
+    var strHTML = ``
+    for (let i = 0; i < board.length; i++) {
+      strHTML += `<tr>`
+      for (let j = 0; j < board[0].length; j++) {
+        var currCell = board[i][j]
+        var className = currCell ? 'occupied' : ''
+        // strHTML += `<td class="${className}">${cell}</td>`
+        strHTML += `<td class="${className}" onclick="cellClicked(this,${i},${j})">${""}</td>`
+      }
+      strHTML += `</tr>`
+    }
+    var elBoard = document.querySelector(selector)
+    elBoard.innerHTML = strHTML
+  }
+  
+  function cellClicked(elCell, i, j) {
+    if(!gIsGame)
+    {
+        gIsGame = true
+        startTimer()
+        updateBoard(i,j)
+    }
+    const cell = gBoard[i][j]
 
+    if (cell.isMine && !cell.isMarked) {
+        stopTimer()
+        console.log('Game over');
+        return
+    }
+    else if (cell.isMarked || cell.isShown) {
+        return
+    }
+    else {
+        cell.isShown = true
+        gBoard[i][j] = cell
+        elCell.innerText = DIGITS[cell.minesAroundCount]
+        expandShown(elCell, i, j)
+    }
 }
- function cellClicked(elCell, i, j)
- {
-
- }
  function cellMarked(elCell)
  {
 
  }
  function checkGameOver()
  {
-
+  
  }
- function expandShown(board, elCell, i, j)
+ function expandShown( elCell, i, j)
  {
 
+
  }
 
- function randMinesLocation()
+ function randMinesLocation(rowIdx, colIdx)
  {
     var randLocations = []
     var loactionsSize = 0
@@ -75,7 +107,7 @@ function renderBoard(board)
         var currRow = getRandomInt(0,gLevel.SIZE)
         var currCol = getRandomInt(0,gLevel.SIZE)
         var currLocation = {row: currRow , col: currCol};
-        if(!randLocations.includes(currLocation))
+        if(!randLocations.includes(currLocation) && currRow != rowIdx && currCol != colIdx)
         {
           randLocations.push(currLocation)
           loactionsSize++
@@ -93,3 +125,38 @@ function renderBoard(board)
    }
    return false
  }
+ function startTimer() {
+    gStartTime = Date.now()
+    gTimeInterval = setInterval(updateTimer, 100)
+  
+  }
+  function updateTimer() {
+    var diff = Date.now() - gStartTime
+    var inSeconds = (diff / 1000).toFixed(1)
+    document.querySelector('.timer').innerText = inSeconds
+  }
+    function stopTimer() {
+    clearInterval(gTimeInterval)
+  }
+  function updateBoard(rowIdx, colIdx) {
+    var randLocations = randMinesLocation(rowIdx, colIdx)
+   
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            var currLocation = {row: i , col: j};
+            var currCell
+            if(inLocations(currLocation,randLocations))
+            {
+                currCell = { minesAroundCount: 0, isShown: false, isMine: true, isMarked: false }
+            }
+            else{
+                currCell = { minesAroundCount: 0, isShown: false, isMine: false, isMarked: false }
+            }
+            
+            currCell.minesAroundCount = setMinesNegsCount(i, j, randLocations)
+            gBoard[i][j] = currCell
+        }
+    }
+    console.log(gBoard)
+  }
+

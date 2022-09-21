@@ -66,31 +66,24 @@ function renderBoard(board, selector) {
     return Math.floor(Math.random() * (max - min)) + min
   }
   
-  
-  function onCellClicked(elCell, cellI, cellJ) {
-    if (gBoard[cellI][cellJ] === LIFE) {
-      gBoard[cellI][cellJ] = SUPER_LIFE
-      elCell.innerText = gBoard[cellI][cellJ]
-      blowUpNegs(cellI, cellJ)
-    }
-  }
+
   
   
-  function cellClicked(elCell, i, j) {
-    const cell = gCinema[i][j]
+  // function cellClicked(elCell, i, j) {
+  //   const cell = gCinema[i][j]
   
-    if (!cell.isSeat || cell.isBooked) return
-    console.log('Cell clicked: ', elCell, i, j)
+  //   if (!cell.isSeat || cell.isBooked) return
+  //   console.log('Cell clicked: ', elCell, i, j)
   
-    // Only a single seat should be selected
-    if (gElSelectedSeat) {
-        gElSelectedSeat.classList.remove('selected')
-    }
-    elCell.classList.add('selected')
-    gElSelectedSeat = elCell
-    // TODO: Support Unselecting a seat
-    showSeatDetails({ i: i, j: j })
-  }
+  //   // Only a single seat should be selected
+  //   if (gElSelectedSeat) {
+  //       gElSelectedSeat.classList.remove('selected')
+  //   }
+  //   elCell.classList.add('selected')
+  //   gElSelectedSeat = elCell
+  //   // TODO: Support Unselecting a seat
+  //   showSeatDetails({ i: i, j: j })
+  // }
   
   
   
@@ -119,9 +112,9 @@ function renderBoard(board, selector) {
     document.querySelector('.timer').innerText = inSeconds
   }
   
-  function stopTimer() {
-    clearInterval(gTimeInterval)
-  }
+  // function stopTimer() {
+  //   clearInterval(gTimeInterval)
+  // }
   
   
   
@@ -137,14 +130,14 @@ function renderBoard(board, selector) {
   }
   
   
-  function initGame(size = 16) {
-    stopTimer()
-    gSize = size
-    gNums = createNums(size)
-    gNextNum = 1
-    renderBoard(size)
-    renderNextNum()
-  }
+  // function initGame(size = 16) {
+  //   stopTimer()
+  //   gSize = size
+  //   gNums = createNums(size)
+  //   gNextNum = 1
+  //   renderBoard(size)
+  //   renderNextNum()
+  // }
   
   
   
