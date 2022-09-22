@@ -5,7 +5,11 @@ gStartTime = 0
 gTimeInterval = 0
 gIsGame = false
 gLoveCount = 3
-const WON = "😄";
+gClickCount =0
+gCellsToClick = 0
+gGameIsOn = true
+const NORMAL = "😄";
+const WIN = '😎'
 const LOST = "😵";
 const EMPTY = "🔲";
 const MINE = "💣";
@@ -34,6 +38,9 @@ renderBoard(gBoard,".board")
 function buildBoard() {
     gBoard = []
     gIsGame = false
+    gClickCount = 0
+    gCellsToClick = (gLevel.SIZE * gLevel.SIZE) - gLevel.MINES
+    gGameIsOn = true
     heartRestart()
     for (var i = 0; i < gLevel.SIZE; i++) {
         gBoard.push([])
@@ -80,6 +87,10 @@ function renderBoard(board,selector) {
   }
   
   function cellClicked(elCell, i, j) {
+    if(!gGameIsOn)
+    {
+        return
+    }
     if(!gIsGame)
     {
         gIsGame = true
@@ -90,28 +101,43 @@ function renderBoard(board,selector) {
 
     if (cell.isMine && !cell.isMarked) {
         loseLife()
+        elCell.innerText = MINE
+        var ellEmoji = document.querySelector('.emoji')
+        ellEmoji.innerText = LOST
+        gBoard[i][j].isShown = true
         if(gLoveCount === 0)
-    { stopTimer()
-        console.log('Game over');
-        return
-    }
+         { 
+            console.log('Game over');
+            isVictory(false)
+            return
+          }
     }
     else if (cell.isMarked || cell.isShown) {
         return
     }
     else {
+        gClickCount++
         cell.isShown = true
         gBoard[i][j] = cell
         elCell.innerText = DIGITS[cell.minesAroundCount]
+        var ellEmoji = document.querySelector('.emoji')
+        ellEmoji.innerText = NORMAL
         if(cell.minesAroundCount === 0)
         {
             expandShown(elCell, i, j)
         }
-        
+        if(gClickCount === gCellsToClick)
+        (
+           isVictory(true)
+        )
     }
 }
 function cellMarked(elCell, i, j) {
     const cell = gBoard[i][j]
+    if(!gGameIsOn)
+    {
+        return
+    }
     if (cell.isShown) {
         return
     }
@@ -138,6 +164,7 @@ function cellMarked(elCell, i, j) {
             if (j < 0 || j >= gLevel.SIZE) continue
             if ((i === rowIdx && j === colIdx )||gBoard[i][j].isShown) continue
             if (!gBoard[i][j].isMine) {
+                gClickCount++
                 gBoard[i][j].isShown = true
                 var currElemCell = document.getElementById("myTable").rows[i].cells[j]
                 currElemCell.innerText = DIGITS[gBoard[i][j].minesAroundCount]
@@ -232,5 +259,39 @@ function cellMarked(elCell, i, j) {
     currElemCell.innerText = "" 
 
   }
+  function isVictory(state) {
+    stopTimer()
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            if(gBoard[i][j].isMine)
+            {
+            var currElemCell = document.getElementById("myTable").rows[i].cells[j]
+            currElemCell.innerText = MINE
+            }
+        }
+    }
+    var elModalBless = document.querySelector('.modal h2')
+    var randColor = getRandomColor()
+    elModalBless.style.color = `${randColor}`
+     if(state)
+     {
+        elModalBless.innerText = `WOW! You Win! You Are The Best!`
+     }
+     else{
+        elModalBless.innerText = `you lost :(`
+     }
+     openModal()
+    gGameIsOn = false
+    return 
+}
+
+function openModal() {
+    // Todo: show the modal and schedule its closing
+    var elModal = document.querySelector('.modal')
+    elModal.style.display = 'block'
+    setTimeout(() => {
+        elModal.style.display = 'none'
+    }, 5000)
+}
 
 

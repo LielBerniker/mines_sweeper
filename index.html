@@ -15,7 +15,9 @@
         <button class="glow-on-hover less" onclick="initGame()">Easy</button>
         <button class="glow-on-hover less" onclick="initGame(8)">Hard</button>
         <button class="glow-on-hover less" onclick="initGame(12)">Extreme</button>
-        <button class="glow-on-hover" onclick="boardRestart()">Restart</button>
+    </div>
+    <div>
+        <button class="glow-on-hover emoji" onclick="boardRestart()">😄</button>
     </div>
     <div><table id="love-table">
         <tr>
@@ -28,6 +30,9 @@
         <tbody class="board"></tbody>
     </table>
     <div><h2>time: <span class="game-data timer">0</span></h2></div>
+    <div class="modal">
+        <h2></h2>
+    </div>
     <script src="js/utils.js"></script>
     <script src="js/mines.js"></script>
 </body>
