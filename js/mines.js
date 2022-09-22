@@ -98,8 +98,10 @@ function renderBoard(board,selector) {
         updateBoard(i,j)
     }
     const cell = gBoard[i][j]
-
-    if (cell.isMine && !cell.isMarked) {
+    if (cell.isMarked || cell.isShown) {
+        return
+    }
+    else if (cell.isMine && !cell.isMarked) {
         loseLife()
         elCell.innerText = MINE
         var ellEmoji = document.querySelector('.emoji')
@@ -111,9 +113,6 @@ function renderBoard(board,selector) {
             isVictory(false)
             return
           }
-    }
-    else if (cell.isMarked || cell.isShown) {
-        return
     }
     else {
         gClickCount++
